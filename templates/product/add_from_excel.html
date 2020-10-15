@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}
+    Modern Shop
+{% endblock %}
+
+{% block content %}
+
+<h1>Add Product from file</h1>
+
+<form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+    <label>Product Type</label>
+    <select type="text" id ="type" name="type">
+            <option value="" selected="selected">All Type</option>
+        {% for type in get_type %}
+            <option value="{{ type.id }}">{{ type.type_name }}</option>
+        {% endfor %}
+    </select>
+    <input type="file" id = 'xlFile' name="xlFile"/>
+    <button type="submit">Upload</button>
+</form>
+{% endblock %}

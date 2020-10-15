@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}
+    Modern Shop
+{% endblock %}
+
+{% block content %}
+
+<h1>Modern Cosmetics</h1>
+
+{% for product in all_products %}
+    <div>
+        <h3>{{product.name}}</h3>
+        <img src='E:/Shop_Management/shop_management/static/images/ayush.jpg' alt="Test Image">
+    </div>
+{% endfor %}
+
+{% endblock %}
