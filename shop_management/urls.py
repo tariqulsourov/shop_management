@@ -25,4 +25,5 @@ urlpatterns = [
     path('add-type', addType, name='addType'),
     path('add-excel', addProductFromExcel, name = 'add-excel'),
     path('admin/', admin.site.urls),
+    # path('barcode/', generateBarcode, name = 'barcode'),
 ]

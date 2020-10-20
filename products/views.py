@@ -6,6 +6,9 @@ from .forms import ProductForm, BrandForm, ProductTypeForm
 
 from xlrd import open_workbook
 import os
+import shutil
+import barcode
+from barcode.writer import ImageWriter
 
 def home(request):
 
@@ -95,11 +98,10 @@ def addProductFromExcel(request):
                 # item = Arm(*values)
                 # print(values)
                 items.append(values)
-        
-
+        p_type = ProductType.objects.get(id = products_type)
+        # print(type(p_type))
         for item in items:
             p_name= item[1]
-            p_bar_code= item[2]
             p_description= item[3]
             p_image= item[4]
             p_volume= item[5]
@@ -107,12 +109,32 @@ def addProductFromExcel(request):
             p_available_quantity= int(float(item[7]))
             p_selling_price = (p_buying_price*.2)+p_buying_price
 
+            p_bar_code= str(p_type)+p_name+p_volume.replace(' ','')+str(p_buying_price)
+            print(p_bar_code)
+
+            bar_class = barcode.get_barcode_class('code39')
+            bar_code = bar_class(p_bar_code, writer = ImageWriter())
+            bar_img = bar_code.save(p_bar_code)
+
+            BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            source_dir = os.path.join(BASE_DIR, bar_img)
+            destination_dir = os.path.join(BASE_DIR, 'static/images')
+            shutil.move(source_dir, destination_dir)
+
             single_product = Products(name = p_name, description= p_description,
                                     p_image = p_image, volume_weight = p_volume,
                                     buying_price = p_buying_price, available_quantity = p_available_quantity,
-                                    bar_code = p_bar_code, bar_code_image = 'test',
+                                    bar_code = p_bar_code, bar_code_image = bar_img,
                                     selling_price = p_selling_price, brand_id = 1, p_type_id = products_type)
                 
             single_product.save()
 
         return redirect('add-excel')
+
+# def generateBarcode(request):
+#     bar_class = barcode.get_barcode_class('code39')
+#     bar_code = bar_class('abc123', writer = ImageWriter())
+#     bar_img = bar_code.save('test')
+#     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#     print(BASE_DIR)
+#     return render(request, 'product/barcode.html', {'bar_img':bar_img})
